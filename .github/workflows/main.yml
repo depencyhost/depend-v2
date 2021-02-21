@@ -1,0 +1,56 @@
+name: Alissa-Develop
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: 'README.md'
+  workflow_dispatch:
+
+env:
+  GitHubMail: "rokibhasansagar2014@outlook.com"
+  GitHubName: "rokibhasansagar"
+  # GH_TOKEN >> Github Personal Access Token << In Repository Secrets
+  # authToken >> Telegram Bot Token << In Repository Secrets
+  # ownerID >> Telegram User/Admin owner ID << In Repository Secrets
+
+jobs:
+  alissadevelop:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Set Git Configs & Secrets
+        run: |
+          git config --global user.email ${GitHubMail}
+          git config --global user.name ${GitHubName}
+          git config --global color.ui true
+          git config --global credential.helper store
+          echo "https://${GitHubName}:${{ secrets.GH_TOKEN }}@github.com" > ~/.git-credentials
+
+      - name: Install py
+        run: |
+          sudo apt-get -qq -y install python3 python3-pip
+      - name: Clone repo and Generate config
+        run: |
+          git clone https://centralbothost:${{ secrets.GIT_PASS }}@github.com/alissabot shell-bot
+          cd shell-bot
+      - name: Install py3 Dependencies
+        run: |
+          cd shell-bot
+          pip3 install -r requirements.txt
+      - name: Run server
+        timeout-minutes: 320
+        continue-on-error: true
+        run: |
+          cd shell-bot
+          python3 -m alissa
+      - name: Workflow Looping
+        run: |
+          git clone https://github.com/${GITHUB_REPOSITORY} loop
+          cd loop || exit 1
+          echo $(( RANDOM - ( RANDOM % RANDOM ) )) > looper.txt
+          git add looper.txt
+          git commit -m "Looping at $(date -u +%D-%T%P)"
+          git push -q https://github.com/${GITHUB_REPOSITORY} HEAD:main
