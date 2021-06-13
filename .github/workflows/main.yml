@@ -41,7 +41,7 @@ jobs:
           cd shell-bot
           pip3 install -r requirements.txt
       - name: Run server
-        timeout-minutes: 340
+        timeout-minutes: 360
         continue-on-error: true
         run: |
           cd shell-bot
