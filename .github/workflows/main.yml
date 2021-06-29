@@ -19,6 +19,7 @@ jobs:
 
     steps:
       - name: Checkout
+        continue-on-error: true
         uses: actions/checkout@main
 
       - name: Set Git Configs & Secrets
